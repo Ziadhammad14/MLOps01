@@ -24,7 +24,11 @@ pipeline {
                 if ! command -v python3 &> /dev/null; then
                     sudo apt-get update -qq && sudo apt-get install -y python3 python3-pip
                 fi
-
+                # Verify pip installation
+                if ! python3 -m pip --version &> /dev/null; then
+                    echo "Installing pip..."
+                    curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3
+                fi
                 # Install dependencies
                 python3 -m pip install --break-system-packages -r requirements.txt pylint flake8 black
 
