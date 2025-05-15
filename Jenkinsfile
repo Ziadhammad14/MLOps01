@@ -1,10 +1,5 @@
 pipeline {
     agent any
-    environment {
-        DOCKERHUB_CREDENTIAL_ID = 'mlops-jenkins-dockerhub-token'
-        DOCKERHUB_REGISTRY = 'https://registry.hub.docker.com'
-        DOCKERHUB_REPOSITORY = 'iquantc/mlops-proj-01'
-    }
     stages {
         stage('Clone Repository') {
             steps {
@@ -17,24 +12,14 @@ pipeline {
         }
         stage('Lint Code') {
     steps {
-        script {
-            echo 'Linting Python Code...'
-            sh '''
-                # Add universe repository (Ubuntu) or non-free (Debian)
-                apt-get update && apt-get install -y software-properties-common
-                # add-apt-repository universe  # For Ubuntu
-                add-apt-repository non-free  # For Debian
-                apt-get update
-                
-                # Now try installing again
-                apt-get install -y python3-pip python3-venv
-                
-                # Continue with virtual environment approach
-                python3 -m venv /tmp/venv
-                . /tmp/venv/bin/activate
-                pip install pylint flake8 black
-                # ... rest of your linter commands
-            '''
+        // Lint code
+                script {
+                    echo 'Linting Python Code...'
+                    sh "python -m pip install --break-system-packages -r requirements.txt"
+                    sh "pylint app.py train.py --output=pylint-report.txt --exit-zero"
+                    sh "flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt"
+                    sh "black app.py train.py"
+            
         }
     }
 }
@@ -43,30 +28,7 @@ pipeline {
                 // Pytest code
                 script {
                     echo 'Testing Python Code...'
-                    sh '''
-                         # Activate the virtual environment we created earlier
-                        . /tmp/venv/bin/activate
-                
-                        # Clean installation of required packages
-                        pip uninstall -y pytest-cov || true
-                        pip install --no-cache-dir pytest pytest-cov
-                
-                        # Verify the installation
-                        python -c "import pytest_cov; print(f'pytest-cov version: {pytest_cov.__version__}')"
-                
-                        # Run tests with coverage and JUnit reporting
-                        python -m pytest tests/ \
-                        --junitxml=test-results.xml \
-                        --cov=./ \
-                        --cov-report=xml:coverage.xml
-                    '''
-            }
-            post {
-                always {
-                junit 'test-results.xml'
-                cobertura 'coverage.xml'
-                archiveArtifacts artifacts: 'coverage.xml', fingerprint: true    
-                    }
+                    sh "pytest tests/"
                 }
             }
         }
