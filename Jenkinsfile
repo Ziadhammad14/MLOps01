@@ -65,6 +65,7 @@ pipeline {
                 always {
                 junit 'test-results.xml'
                 cobertura 'coverage.xml'
+                archiveArtifacts artifacts: 'coverage.xml', fingerprint: true    
                     }
                 }
             }
