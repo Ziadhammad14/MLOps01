@@ -35,7 +35,7 @@ pipeline {
             '''
         }
     }
-}}
+}
         stage('Test Code') {
             steps {
                 // Pytest code
