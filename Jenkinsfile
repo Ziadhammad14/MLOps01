@@ -43,7 +43,13 @@ pipeline {
                 // Pytest code
                 script {
                     echo 'Testing Python Code...'
-                    sh "pytest tests/"
+                    sh '''
+                        # Install pytest system-wide
+                        python3 -m pip install --break-system-packages pytest
+                
+                        # Run tests
+                        python3 -m pytest tests/ --verbose --junitxml=test-results.xml
+                    '''
                 }
             }
         }
