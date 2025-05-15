@@ -47,15 +47,15 @@ pipeline {
                          # Activate the virtual environment we created earlier
                         . /tmp/venv/bin/activate
                 
-                        # Install all requirements including test dependencies
-                        pip install -r requirements.txt
+                        # Clean installation of required packages
+                        pip uninstall -y pytest-cov || true
+                        pip install --no-cache-dir pytest pytest-cov
                 
-                        # Install additional test packages if needed
-                        pip install numpy pytest  # Add other required packages
+                        # Verify the installation
+                        python -c "import pytest_cov; print(f'pytest-cov version: {pytest_cov.__version__}')"
                 
                         # Run tests with coverage and JUnit reporting
-                        pytest tests/ \
-                        --verbose \
+                        python -m pytest tests/ \
                         --junitxml=test-results.xml \
                         --cov=./ \
                         --cov-report=xml:coverage.xml
