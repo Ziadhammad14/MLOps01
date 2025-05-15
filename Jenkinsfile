@@ -16,17 +16,26 @@ pipeline {
             }
         }
         stage('Lint Code') {
-            steps {
-                // Lint code
-                script {
-                    echo 'Linting Python Code...'
-                    sh "python -m pip install --break-system-packages -r requirements.txt"
-                    sh "pylint app.py train.py --output=pylint-report.txt --exit-zero"
-                    sh "flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt"
-                    sh "black app.py train.py"
-                }
-            }
+    steps {
+        script {
+            echo 'Linting Python Code...'
+            sh '''
+                # Install Python and pip if not present (Debian/Ubuntu-based Jenkins)
+                if ! command -v python3 &> /dev/null; then
+                    sudo apt-get update -qq && sudo apt-get install -y python3 python3-pip
+                fi
+
+                # Install dependencies
+                python3 -m pip install --break-system-packages -r requirements.txt pylint flake8 black
+
+                # Run linters
+                python3 -m pylint app.py train.py --output=pylint-report.txt --exit-zero
+                python3 -m flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt
+                python3 -m black app.py train.py
+            '''
         }
+    }
+}}
         stage('Test Code') {
             steps {
                 // Pytest code
