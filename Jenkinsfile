@@ -20,22 +20,17 @@ pipeline {
         script {
             echo 'Linting Python Code...'
             sh '''
-                # Install Python and pip if not present (Debian/Ubuntu-based Jenkins)
-                if ! command -v python3 &> /dev/null; then
-                    apt-get update -qq && apt-get install -y python3 python3-pip
-                fi
-                # Verify pip installation
-                if ! python3 -m pip --version &> /dev/null; then
-                    echo "Installing pip..."
-                    curl -sS https://bootstrap.pypa.io/get-pip.py | python3
-                fi
-                # Install dependencies
-                python3 -m pip install --break-system-packages -r requirements.txt pylint flake8 black
-
+                # Install system packages
+                apt-get update && apt-get install -y \
+                    python3-pylint \
+                    python3-flake8 \
+                    python3-black \
+                    python3-pip
+                
                 # Run linters
-                python3 -m pylint app.py train.py --output=pylint-report.txt --exit-zero
-                python3 -m flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt
-                python3 -m black app.py train.py
+                pylint app.py train.py --output=pylint-report.txt --exit-zero
+                flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt
+                black app.py train.py
             '''
         }
     }
