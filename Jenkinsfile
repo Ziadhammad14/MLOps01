@@ -44,11 +44,21 @@ pipeline {
                 script {
                     echo 'Testing Python Code...'
                     sh '''
-                        # Install pytest system-wide
-                        python3 -m pip install --break-system-packages pytest
+                         # Activate the virtual environment we created earlier
+                        . /tmp/venv/bin/activate
                 
-                        # Run tests
-                        python3 -m pytest tests/ --verbose --junitxml=test-results.xml
+                        # Install all requirements including test dependencies
+                        pip install -r requirements.txt
+                
+                        # Install additional test packages if needed
+                        pip install numpy pytest  # Add other required packages
+                
+                        # Run tests with coverage and JUnit reporting
+                        pytest tests/ \
+                        --verbose \
+                        --junitxml=test-results.xml \
+                        --cov=./ \
+                        --cov-report=xml:coverage.xml
                     '''
                 }
             }
