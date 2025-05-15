@@ -60,6 +60,11 @@ pipeline {
                         --cov=./ \
                         --cov-report=xml:coverage.xml
                     '''
+            post {
+            always {
+                junit 'test-results.xml'
+                cobertura 'coverage.xml'
+                    }
                 }
             }
         }
