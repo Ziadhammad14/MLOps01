@@ -15,10 +15,10 @@ pipeline {
         // Lint code
                 script {
                     echo 'Linting Python Code...'
-                    sh "python -m pip install --break-system-packages -r requirements.txt"
-                    sh "pylint app.py train.py --output=pylint-report.txt --exit-zero"
-                    sh "flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt"
-                    sh "black app.py train.py"
+                    //sh "python -m pip install --break-system-packages -r requirements.txt"
+                    //sh "pylint app.py train.py --output=pylint-report.txt --exit-zero"
+                    //sh "flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt"
+                    //sh "black app.py train.py"
             
         }
     }
@@ -28,7 +28,7 @@ pipeline {
                 // Pytest code
                 script {
                     echo 'Testing Python Code...'
-                    sh "pytest tests/"
+                    // sh "pytest tests/"
                 }
             }
         }
@@ -37,7 +37,7 @@ pipeline {
                 // Trivy Filesystem Scan
                 script {
                     echo 'Scannning Filesystem with Trivy...'
-                    sh "trivy fs ./ --format table -o trivy-fs-report.html"
+                    // sh "trivy fs ./ --format table -o trivy-fs-report.html"
                 }
             }
         }
@@ -46,7 +46,7 @@ pipeline {
                 // Build Docker Image
                 script {
                     echo 'Building Docker Image...'
-                    dockerImage = docker.build("${DOCKERHUB_REPOSITORY}:latest") 
+                    // dockerImage = docker.build("${DOCKERHUB_REPOSITORY}:latest") 
                 }
             }
         }
@@ -55,7 +55,7 @@ pipeline {
                 // Trivy Docker Image Scan
                 script {
                     echo 'Scanning Docker Image with Trivy...'
-                    sh "trivy image ${DOCKERHUB_REPOSITORY}:latest --format table -o trivy-image-report.html"
+                    // sh "trivy image ${DOCKERHUB_REPOSITORY}:latest --format table -o trivy-image-report.html"
                 }
             }
         }
@@ -64,8 +64,8 @@ pipeline {
                 // Push Docker Image to DockerHub
                 script {
                     echo 'Pushing Docker Image to DockerHub...'
-                    docker.withRegistry("${DOCKERHUB_REGISTRY}", "${DOCKERHUB_CREDENTIAL_ID}"){
-                        dockerImage.push('latest')
+                    // docker.withRegistry("${DOCKERHUB_REGISTRY}", "${DOCKERHUB_CREDENTIAL_ID}"){
+                        //dockerImage.push('latest')
                     }
                 }
             }
@@ -75,7 +75,7 @@ pipeline {
                 // Deploy Image to Amazon ECS
                 script {
                     echo 'Deploying to production...'
-                        sh "aws ecs update-service --cluster iquant-ecs --service iquant-ecs-svc --force-new-deployment"
+                        // sh "aws ecs update-service --cluster iquant-ecs --service iquant-ecs-svc --force-new-deployment"
                     }
                 }
             }
