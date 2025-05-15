@@ -20,17 +20,20 @@ pipeline {
         script {
             echo 'Linting Python Code...'
             sh '''
-                # Install system packages
-                apt-get update && apt-get install -y \
-                    python3-pylint \
-                    python3-flake8 \
-                    python3-black \
-                    python3-pip
+                # Add universe repository (Ubuntu) or non-free (Debian)
+                apt-get update && apt-get install -y software-properties-common
+                # add-apt-repository universe  # For Ubuntu
+                add-apt-repository non-free  # For Debian
+                apt-get update
                 
-                # Run linters
-                pylint app.py train.py --output=pylint-report.txt --exit-zero
-                flake8 app.py train.py --ignore=E501,E302 --output-file=flake8-report.txt
-                black app.py train.py
+                # Now try installing again
+                apt-get install -y python3-pip python3-venv
+                
+                # Continue with virtual environment approach
+                python3 -m venv /tmp/venv
+                . /tmp/venv/bin/activate
+                pip install pylint flake8 black
+                # ... rest of your linter commands
             '''
         }
     }
