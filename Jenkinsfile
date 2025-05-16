@@ -11,7 +11,7 @@ pipeline {
             }
         }
         stage('Lint Code') {
-    steps {
+            steps {
         // Lint code
                 script {
                     echo 'Linting Python Code...'
