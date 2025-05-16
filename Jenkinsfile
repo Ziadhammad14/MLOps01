@@ -1,4 +1,4 @@
-pipeline {
+pipeline {	
     agent any
     environment {
         DOCKERHUB_CREDENTIAL_ID = 'mlops-jenkins-dockerhub-token'
@@ -71,7 +71,7 @@ pipeline {
                 // Push Docker Image to DockerHub
                 script {
                     echo 'Pushing Docker Image to DockerHub...'
-                    docker.withRegistry('${DOCKERHUB_REGISTRY}', '${DOCKERHUB_CREDENTIAL_ID}'){
+                    docker.withRegistry("${DOCKERHUB_REGISTRY}", "${DOCKERHUB_CREDENTIAL_ID}"){
                         dockerImage.push('latest')
                     }
                     // docker.withRegistry("${DOCKERHUB_REGISTRY}", "${DOCKERHUB_CREDENTIAL_ID}"){
