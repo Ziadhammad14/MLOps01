@@ -56,6 +56,7 @@ pipeline {
                 // Trivy Docker Image Scan
                 script {
                     echo 'Scanning Docker Image with Trivy...'
+                    sh "trivy image mlops-app-01 --format table -o trivy-fs-report.html"
                     // sh "trivy image ${DOCKERHUB_REPOSITORY}:latest --format table -o trivy-image-report.html"
                 }
             }
