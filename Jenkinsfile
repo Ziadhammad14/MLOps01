@@ -85,7 +85,7 @@ pipeline {
                 // Deploy Image to Amazon ECS
                 script {
                     echo 'Deploying to production...'
-                        sh "aws ecs update-service --cluster mlops-ecs --service mlops-ecs-task-dev-service --force-new-deployment"
+                        sh "aws ecs update-service --cluster mlops-ecs --service mlops-ecs-task-dev-service --force-new-deployment --region us-east-1" 
                     }
                 }
             }
